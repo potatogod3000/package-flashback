@@ -1,8 +1,7 @@
-#include "arch.h"
-#include "debian.h"
-#include "fedora.h"
-#include "ubuntu.h"
+#include "system.h"
+#include "os.h"
 
 int main() {
+    operatingSystemCheck();
     return 0;
 }
