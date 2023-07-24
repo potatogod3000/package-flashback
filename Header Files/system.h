@@ -8,5 +8,6 @@ public:
     //std::string name;
 };
 
-void operatingSystemCheck();
+bool operatingSystemCheck();
+void osName();
 void linuxSystem();
