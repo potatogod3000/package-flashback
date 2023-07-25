@@ -2,6 +2,6 @@
 #include "os.h"
 
 int main(int argc, char * argv[]) {
-    operatingSystemCheck();
+    bool check = operatingSystemCheck();
     return 0;
 }
