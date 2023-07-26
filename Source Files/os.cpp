@@ -3,17 +3,19 @@
 int packagesInstalledCount;
 std::vector<std::string> packagesInstalled;
 
-void arch() {
+void arch(char **argv) {
 
 }
 
-void debian() {
+void debian(char **argv) {
     
 }
 
-void fedora() {
+void fedora(char **argv) {
     std::string packagesCount, packages;
     std::array<char, 80> buffer;
+
+    // Count of installed packages (-i)
     FILE *pkgcnt = popen("dnf list installed | wc -l", "r"); 
     
     if(!pkgcnt) {
@@ -27,33 +29,44 @@ void fedora() {
         pclose(pkgcnt);
         packagesCount.erase(std::remove(packagesCount.begin(), packagesCount.end(), '\n'), packagesCount.cend());
         packagesInstalledCount = std::stoi(packagesCount);
-        std::cout << "You have " << packagesInstalledCount << " packages installed currently in your system." << std::endl;
+        std::cout << "You have " << packagesInstalledCount << " packages installed currently in your system.";
     }
-    catch(const std::exception& exception) {
+    catch(const std::exception &exception) {
         std::cerr << "\n" << "!!!EXCEPTION!!! \"" << exception.what() << "\"" << '\n';
     }
 
-    FILE *pkgs = popen("dnf list installed | awk '{print $1}'", "r");
+    // listing installed packages (-p)
+    const char separator    = ' ';
+    const int spaceWidth     = 75;
 
-    try {
-        while (fgets(buffer.data(), buffer.size(), pkgs) != nullptr) {
-            packages = buffer.data();
-            packages.erase(std::remove(packages.begin(), packages.end(), '\n'), packages.cend());
-            packagesInstalled.push_back(packages);
+    if (strcmp(argv[1], "-p") == 0) {
+        FILE *pkgs = popen("dnf list installed | awk '{print $1}'", "r");
+
+        try {
+            while (fgets(buffer.data(), buffer.size(), pkgs) != nullptr) {
+                packages = buffer.data();
+                packages.erase(std::remove(packages.begin(), packages.end(), '\n'), packages.cend());
+                packagesInstalled.push_back(packages);
+            }
+            pclose(pkgs);
         }
-        pclose(pkgs);
-    }
-    catch(const std::exception& exception) {
-        std::cerr << "\n" << "!!!EXCEPTION!!! \"" << exception.what() << "\"" << '\n';
-    }
+        catch(const std::exception &exception) {
+            std::cerr << "\n" << "!!!EXCEPTION!!! \"" << exception.what() << "\"" << '\n';
+        }
 
-    std::cout << "The packages installed are:\n";
-    for(int i = 0; i < packagesInstalled.size(); i++) {
-        std::cout << packagesInstalled[i] << "  ";
+        //std::sort(packagesInstalled.begin(), packagesInstalled.end());
+    
+        std::cout << " The packages installed are:\n\n";
+        for(int i = 0; i < packagesInstalled.size(); i += 3) {
+            std::cout << std::left << std::setw(spaceWidth) << std::setfill(separator) << packagesInstalled[i];
+            std::cout << std::left << std::setw(spaceWidth) << std::setfill(separator) << packagesInstalled[i+1];
+            std::cout << std::left << std::setw(spaceWidth) << std::setfill(separator) << packagesInstalled[i+2] << std::endl;
+        }
+        std::cout << std::endl;
     }
     std::cout << std::endl;
 }
 
-void ubuntu() {
+void ubuntu(char **argv) {
 
 }

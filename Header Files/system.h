@@ -3,11 +3,6 @@
 #include <fstream>
 #include <regex>
 
-class system {
-public:
-    //std::string name;
-};
-
 bool operatingSystemCheck();
-void osName();
-void linuxSystem();
+std::string osName();
+void linuxSystem(bool check, std::string name, char **argv);

@@ -1,13 +1,11 @@
 #include "system.h"
 #include "os.h"
 
-std::string name;
 std::vector<std::string> supportedOS = {"Arch Linux", "Debian GNU/Linux", "Fedora Linux", "Ubuntu"};
 
 bool operatingSystemCheck() {
-    std::cout << "|| Welcome to package-flashback ||\n\nChecking your operating system... ";
+    std::cout << "Checking your operating system... ";
     #if defined(__linux__)
-        osName();
         return true;
     #else
         std::cout << "Sorry, this application is only supported in Linux-based operating systems." << std::endl;
@@ -15,7 +13,8 @@ bool operatingSystemCheck() {
     #endif
 }
 
-void osName() {
+std::string osName() {
+    std::string name;
     std::string line;
     // REQUIRES /etc/os-release
 
@@ -30,18 +29,20 @@ void osName() {
         }
     }
     std::cout << "You are using " << name << ".\n\n";
-    linuxSystem();
+    return name;
 }
 
-void linuxSystem() {
-    if (name == "Arch Linux")
-        arch();
-    else if (name == "Debian")
-        debian();
-    else if (name == "Fedora Linux")
-        fedora();
-    else if (name == "Ubuntu")
-        ubuntu();
+void linuxSystem(bool check, std::string name, char **argv) {
+    if(check) {
+        if (name == "Arch Linux")
+            arch(argv);
+        else if (name == "Debian")
+            debian(argv);
+        else if (name == "Fedora Linux")
+            fedora(argv);
+        else if (name == "Ubuntu")
+            ubuntu(argv);
+    }
     else {
         std::cout << "\nSorry. Only ";
         for(int i = 0; i < supportedOS.size(); i++) {
