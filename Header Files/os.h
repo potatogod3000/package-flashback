@@ -11,7 +11,4 @@
 #include <sys/wait.h>
 #include <cerrno> */
 
-void arch(char **argv);
-void debian(char **argv);
-void fedora(char **argv);
-void ubuntu(char **argv);
+void packages(const char *listPackageCount, const char *listPackages,char **argv);

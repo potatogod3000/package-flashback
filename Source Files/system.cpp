@@ -2,6 +2,7 @@
 #include "os.h"
 
 std::vector<std::string> supportedOS = {"Arch Linux", "Debian GNU/Linux", "Fedora Linux", "Ubuntu"};
+const char *listPackageCount, *listPackages;
 
 bool operatingSystemCheck() {
     std::cout << "Checking your operating system... ";
@@ -34,14 +35,26 @@ std::string osName() {
 
 void linuxSystem(bool check, std::string name, char **argv) {
     if(check) {
-        if (name == "Arch Linux")
-            arch(argv);
-        else if (name == "Debian")
-            debian(argv);
-        else if (name == "Fedora Linux")
-            fedora(argv);
-        else if (name == "Ubuntu")
-            ubuntu(argv);
+        if (name == "Arch Linux") {
+            listPackageCount = "";
+            listPackages = "";
+            packages(listPackageCount, listPackages, argv);
+        }
+        else if (name == "Debian") {
+            listPackageCount = "dpkg --list | wc --lines";
+            listPackages = "";
+            packages(listPackageCount, listPackages, argv);
+        }
+        else if (name == "Fedora Linux") {
+            listPackageCount = "dnf list installed | awk 'NR!=1 {print}' | wc --lines";
+            listPackages = "dnf list installed | awk 'NR!=1 {print $1}'";
+            packages(listPackageCount, listPackages, argv);
+        }
+        else if (name == "Ubuntu") {
+            listPackageCount = "";
+            listPackages = "";
+            packages(listPackageCount, listPackages, argv);
+        }
     }
     else {
         std::cout << "\nSorry. Only ";
