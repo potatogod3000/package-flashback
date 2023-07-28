@@ -11,4 +11,5 @@
 #include <sys/wait.h>
 #include <cerrno> */
 
-void packages(const char *listPackageCount, const char *listPackages,char **argv);
+void packages(const char *listPackageCount, const char *listPackages, char **argv);
+void searchPackages(std::vector<std::string> packagesInstalled, char **argv);
