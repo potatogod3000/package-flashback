@@ -2,8 +2,7 @@
 #include "os.h"
 
 int main(int argc, char **argv) {
-    
-    //  || strcmp(argv[1], "-h") == 0
+
     if(argc < 2 || (strcmp(argv[1], "-s") == 0 && (argc > 3 || argc < 3))) {
         std::cout << "WRONG USAGE" << "\n\n";
         std::cout << "USAGE: package-flashback <arguments>\n";

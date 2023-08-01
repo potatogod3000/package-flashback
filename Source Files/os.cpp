@@ -2,6 +2,9 @@
 
 int packagesInstalledCount;
 std::vector<std::string> packagesInstalled;
+const std::string xdgDataDir = getenv("HOME") + std::string("/.local/share");
+const std::string packageFlashbackDir = xdgDataDir + std::string("/package-flashback");
+const std::string packageFlashbackFile = packageFlashbackDir + std::string("/packagesInstalled.txt");
 
 void packages(const char *listPackageCount, const char *listPackages, char **argv) {
     std::string packagesCount, packages;
@@ -11,7 +14,7 @@ void packages(const char *listPackageCount, const char *listPackages, char **arg
     FILE *pkgcnt = popen(listPackageCount, "r"); 
     
     if(!pkgcnt) {
-        std::cerr << "Cannot access \"dnf\" package manager. Is this system immutable?" << std::endl;
+        std::cerr << "Cannot access the package manager! Is this system immutable?" << std::endl;
     }
 
     try {
@@ -40,6 +43,9 @@ void packages(const char *listPackageCount, const char *listPackages, char **arg
     catch(const std::exception &exception) {
         std::cerr << "\n" << "!!!EXCEPTION!!! \"" << exception.what() << "\"" << '\n';
     }
+
+    // Save packages to a file in $XDG_DATA_HOME/package-flashback
+    savePackages(packagesInstalled);
 
     // listing installed packages (argv -p)
     if (strcmp(argv[1], "-p") == 0) {
@@ -77,4 +83,17 @@ void searchPackages(std::vector<std::string> packagesInstalled, char **argv) {
     }
 
     std::cout << "\nFound " << count << " packages!" << std::endl;
+}
+
+void savePackages(std::vector<std::string> packagesInstalled) {
+    struct stat info;
+    if(stat(packageFlashbackDir.c_str(), &info) != 0)
+        mkdir(packageFlashbackDir.c_str(), 0777);
+
+    std::ofstream packagesTxt(packageFlashbackFile);
+
+    for(auto it: packagesInstalled) {
+        packagesTxt << it << std::endl;
+    }
+    packagesTxt.close();
 }

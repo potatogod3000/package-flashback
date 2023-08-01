@@ -6,10 +6,15 @@
 #include <array>
 #include <exception>
 #include <iomanip>
-/* Unix Library for fork()
+#include <fstream>
+// Unix Library for fork()
+#include <sys/stat.h> // mkdir()
+/*
 #include <unistd.h>
 #include <sys/wait.h>
-#include <cerrno> */
+#include <cerrno>
+*/
 
 void packages(const char *listPackageCount, const char *listPackages, char **argv);
 void searchPackages(std::vector<std::string> packagesInstalled, char **argv);
+void savePackages(std::vector<std::string> packagesInstalled);
