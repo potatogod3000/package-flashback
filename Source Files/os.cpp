@@ -30,6 +30,7 @@ void packages(const char *listPackageCount, const char *listPackages, char **arg
         std::cerr << "\n" << "!!!EXCEPTION!!! \"" << exception.what() << "\"" << '\n';
     }
 
+    // Storing all installed packages in `std::vector packagesInstalled<std::string>`
     FILE *pkgs = popen(listPackages, "r");
 
     try {
@@ -64,6 +65,7 @@ void packages(const char *listPackageCount, const char *listPackages, char **arg
     }
     std::cout << std::endl;
 
+    // Searching within installed packages (argv -s <"string">)
     if (strcmp(argv[1], "-s") == 0) {
         searchPackages(packagesInstalled, argv);
     }
@@ -87,11 +89,34 @@ void searchPackages(std::vector<std::string> packagesInstalled, char **argv) {
 
 void savePackages(std::vector<std::string> packagesInstalled) {
     struct stat info;
-    if(stat(packageFlashbackDir.c_str(), &info) != 0)
-        mkdir(packageFlashbackDir.c_str(), 0777);
+    FILE *packagesInstalledFile;
 
+    // Using sys/stat.h to see if the directory is already created
+    if(stat(packageFlashbackDir.c_str(), &info) != 0) {
+        mkdir(packageFlashbackDir.c_str(), 0777);    
+    }
+    
+    // Check if packagesInstalled.txt has already been created and make it a backup
+    else if(packagesInstalledFile = fopen(packageFlashbackFile.c_str(), "r")) {
+        int identifier;
+        std::cout << "\nThere is already a \"packagesInstalled.txt\" file created by package-flashback. Enter an identifier number for the backup file: ";
+        std::cin >> identifier;
+
+        // Handling character inputs
+        while (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(INT_MAX, '\n');
+            std::cout << "You can only enter identifier numbers. Enter an identifier number for backup file: ";
+            std::cin >> identifier;
+        }
+        
+        // Renaming the already generated "packagesInstalled.txt" file to store as backup
+        std::filesystem::rename(packageFlashbackFile, packageFlashbackDir + "/packagesInstalled." + std::to_string(identifier) + ".bak");
+        fclose(packagesInstalledFile);
+    }
+
+    // Writing packagesInstalled vector into "packagesInstalled.txt" file
     std::ofstream packagesTxt(packageFlashbackFile);
-
     for(auto it: packagesInstalled) {
         packagesTxt << it << std::endl;
     }
