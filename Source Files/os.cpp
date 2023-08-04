@@ -45,9 +45,6 @@ void packages(const char *listPackageCount, const char *listPackages, char **arg
         std::cerr << "\n" << "!!!EXCEPTION!!! \"" << exception.what() << "\"" << '\n';
     }
 
-    // Save packages to a file in $XDG_DATA_HOME/package-flashback
-    savePackages(packagesInstalled);
-
     // listing installed packages (argv -p)
     if (strcmp(argv[1], "-p") == 0) {
         
@@ -65,8 +62,13 @@ void packages(const char *listPackageCount, const char *listPackages, char **arg
     }
     std::cout << std::endl;
 
-    // Searching within installed packages (argv -s <"string">)
-    if (strcmp(argv[1], "-s") == 0) {
+    // Save packages to a file in $XDG_DATA_HOME/package-flashback
+    if(strcmp(argv[1], "-sv") == 0) {
+        savePackages(packagesInstalled);
+    }
+
+    // Searching within installed packages (argv -se <"string">)
+    if (strcmp(argv[1], "-se") == 0) {
         searchPackages(packagesInstalled, argv);
     }
 }
@@ -98,21 +100,23 @@ void savePackages(std::vector<std::string> packagesInstalled) {
     
     // Check if packagesInstalled.txt has already been created and make it a backup
     else if(packagesInstalledFile = fopen(packageFlashbackFile.c_str(), "r")) {
-        int identifier;
-        std::cout << "\nThere is already a \"packagesInstalled.txt\" file created by package-flashback. Enter an identifier number for the backup file: ";
-        std::cin >> identifier;
-
-        // Handling character inputs
-        while (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(INT_MAX, '\n');
-            std::cout << "You can only enter identifier numbers. Enter an identifier number for backup file: ";
-            std::cin >> identifier;
+        std::ifstream packagesInstalledTxt(packageFlashbackFile);
+        std::string line;
+        bool match;
+        for(int i = 0; getline(packagesInstalledTxt, line), i < packagesInstalled.size(); i++) {
+            if(strcmp(packagesInstalled[i].c_str(), line.c_str()) == 0) match = true;
+            else match = false;
         }
-        
-        // Renaming the already generated "packagesInstalled.txt" file to store as backup
-        std::filesystem::rename(packageFlashbackFile, packageFlashbackDir + "/packagesInstalled." + std::to_string(identifier) + ".bak");
-        fclose(packagesInstalledFile);
+
+        if(match == true) std::cout << "\nThe packages installed have not changed since the last check. \"packageInstalled.txt\" unchanged." << std::endl;
+
+        else {
+            // Renaming the already generated "packagesInstalled.txt" file to store as backup
+            std::filesystem::rename(packageFlashbackFile, packageFlashbackDir + "/packagesInstalled_" + currentDateTime() + ".bak");
+            fclose(packagesInstalledFile);
+            
+            std::cout << "\nThere is already a \"packagesInstalled.txt\" file created but the packages installed have changed. A backup of that file has been created.";
+        }
     }
 
     // Writing packagesInstalled vector into "packagesInstalled.txt" file
@@ -121,4 +125,15 @@ void savePackages(std::vector<std::string> packagesInstalled) {
         packagesTxt << it << std::endl;
     }
     packagesTxt.close();
+    std::cout << "Saved in \'" << packageFlashbackDir << "/\'." << std::endl;
+}
+
+// Getting current date and time from system
+const std::string currentDateTime() {
+    time_t now = time(0);
+    struct tm *tstruct = localtime(&now);
+    char buf[80];
+    strftime(buf, sizeof(buf), "%d-%m-%Y_%H-%M-%S", tstruct);
+
+    return buf;
 }

@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <fstream>
 #include <filesystem>
+#include <ctime>
 #include <climits>
 // Unix Library for fork()
 #include <sys/stat.h> // mkdir()
@@ -20,3 +21,4 @@
 void packages(const char *listPackageCount, const char *listPackages, char **argv);
 void searchPackages(std::vector<std::string> packagesInstalled, char **argv);
 void savePackages(std::vector<std::string> packagesInstalled);
+const std::string currentDateTime();
