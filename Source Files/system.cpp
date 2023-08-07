@@ -1,5 +1,5 @@
 #include "system.h"
-#include "os.h"
+#include "backup.h"
 
 std::vector<std::string> supportedOS = {"Arch Linux", "Debian GNU/Linux", "Fedora Linux", "Ubuntu"};
 const char *listPackageCount, *listPackages;
