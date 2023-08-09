@@ -1,13 +1,13 @@
 #include "backup.h"
 
 int packagesInstalledCount;
-std::vector<std::string> packagesInstalled;
 const std::string xdgDataDir = getenv("HOME") + std::string("/.local/share");
 const std::string packageFlashbackDir = xdgDataDir + std::string("/package-flashback");
 const std::string packageFlashbackFile = packageFlashbackDir + std::string("/packagesInstalled.txt");
 
 void packages(const char *listPackageCount, const char *listPackages, char **argv) {
-    std::string packagesCount, packages;
+    std::vector<std::string> packagesInstalled;
+    std::string packagesCount;
     std::array<char, 80> buffer;
 
     // Count of installed packages (argv -i)
@@ -30,20 +30,8 @@ void packages(const char *listPackageCount, const char *listPackages, char **arg
         std::cerr << "\n" << "!!!EXCEPTION!!! \"" << exception.what() << "\"" << '\n';
     }
 
-    // Storing all installed packages in `std::vector packagesInstalled<std::string>`
-    FILE *pkgs = popen(listPackages, "r");
-
-    try {
-        while (fgets(buffer.data(), buffer.size(), pkgs) != nullptr) {
-            packages = buffer.data();
-            packages.erase(std::remove(packages.begin(), packages.end(), '\n'), packages.cend());
-            packagesInstalled.push_back(packages);
-        }
-        pclose(pkgs);
-    }
-    catch(const std::exception &exception) {
-        std::cerr << "\n" << "!!!EXCEPTION!!! \"" << exception.what() << "\"" << '\n';
-    }
+    // Storing all installed packages in a vector
+    packagesInstalled = storePackagesInstalled(listPackages);
 
     // listing installed packages (argv -p)
     if (strcmp(argv[1], "-p") == 0) {
@@ -73,6 +61,29 @@ void packages(const char *listPackageCount, const char *listPackages, char **arg
     }
 }
 
+// Storing all installed packages in `std::vector packagesInstalled<std::string>`
+std::vector<std::string> storePackagesInstalled(const char *listPackages) {
+    std::string packages;
+    std::array<char, 80> buffer;
+    std::vector<std::string> packagesInstalled;
+
+    FILE *pkgs = popen(listPackages, "r");
+
+    try {
+        while (fgets(buffer.data(), buffer.size(), pkgs) != nullptr) {
+            packages = buffer.data();
+            packages.erase(std::remove(packages.begin(), packages.end(), '\n'), packages.cend());
+            packagesInstalled.push_back(packages);
+        }
+        pclose(pkgs);
+        return packagesInstalled;
+    }
+    catch(const std::exception &exception) {
+        std::cerr << "\n" << "!!!EXCEPTION!!! \"" << exception.what() << "\"" << '\n';
+    }
+}
+
+// Searching for entered string within the vector elements
 void searchPackages(std::vector<std::string> packagesInstalled, char **argv) {
     std::cout << "Found the package(s): " << std::endl;
     int count = 0;
@@ -89,6 +100,7 @@ void searchPackages(std::vector<std::string> packagesInstalled, char **argv) {
     std::cout << "\nFound " << count << " packages!" << std::endl;
 }
 
+// Saving packages to a file inside $XDG_DATA_HOME
 void savePackages(std::vector<std::string> packagesInstalled) {
     struct stat info;
     FILE *packagesInstalledFile;
