@@ -1,8 +1,19 @@
 #include "system.h"
 #include "backup.h"
+#include "restore.h"
 
-std::vector<std::string> supportedOS = {"Arch Linux", "Debian GNU/Linux", "Fedora Linux", "Ubuntu"};
-const char *listPackageCount, *listPackages;
+const char *listPackageCount, *listPackages, *installPackagesCommand;
+
+void unsupportedSystem() {
+    std::vector<std::string> supportedOS = {"Arch Linux", "Debian GNU/Linux", "Fedora Linux", "Ubuntu"};
+    std::cout << "\nSorry. Only ";
+        for(int i = 0; i < supportedOS.size(); i++) {
+            std::cout << supportedOS[i];
+            if(i <= supportedOS.size() - 3) std::cout << ", ";
+            else if(i == supportedOS.size() - 2) std::cout << " and ";
+        }
+    std::cout << " are supported." << std::endl;
+}
 
 bool operatingSystemCheck() {
     std::cout << "Checking your operating system... ";
@@ -33,36 +44,60 @@ std::string osName() {
     return name;
 }
 
-void linuxSystem(bool check, std::string name, char **argv) {
+void setCommands(bool check, std::string name, char **argv) {
     if(check) {
-        if (name == "Arch Linux") {
+        if(name == "Arch Linux") {
             listPackageCount = "";
             listPackages = "";
             packages(listPackageCount, listPackages, argv);
         }
-        else if (name == "Debian") {
+        else if(name == "Debian") {
             listPackageCount = "dpkg --list | wc --lines";
             listPackages = "";
             packages(listPackageCount, listPackages, argv);
         }
-        else if (name == "Fedora Linux") {
+        else if(name == "Fedora Linux") {
             listPackageCount = "dnf list installed | awk 'NR!=1 {print}' | wc --lines";
             listPackages = "dnf list installed | awk 'NR!=1 {print $1}'";
             packages(listPackageCount, listPackages, argv);
         }
-        else if (name == "Ubuntu") {
+        else if(name == "Ubuntu") {
             listPackageCount = "";
             listPackages = "";
             packages(listPackageCount, listPackages, argv);
         }
     }
     else {
-        std::cout << "\nSorry. Only ";
-        for(int i = 0; i < supportedOS.size(); i++) {
-            std::cout << supportedOS[i];
-            if(i <= supportedOS.size() - 3) std::cout << ", ";
-            else if(i == supportedOS.size() - 2) std::cout << " and ";
+        unsupportedSystem();
+    }
+}
+
+void installedPackages() {
+    
+
+    
+}
+
+void toBeInstalledPackages() {
+    if(check) {
+        if(name == "Arch Linux") {
+            installPackagesCommand = "sudo pacman -S ";
+            restorePackages(installPackagesCommand, storePackagesInstalled(listPackages), fileCheck(argv));
         }
-        std::cout << " are supported." << std::endl;
+        else if(name == "Debian") {
+            installPackagesCommand = "sudo apt install ";
+            restorePackages(installPackagesCommand, storePackagesInstalled(listPackages), fileCheck(argv));
+        }
+        else if(name == "Fedora Linux") {
+            installPackagesCommand = "sudo dnf install ";
+            restorePackages(installPackagesCommand, storePackagesInstalled(listPackages), fileCheck(argv));
+        }
+        else if(name == "Ubuntu") {
+            installPackagesCommand = "sudo apt install ";
+            restorePackages(installPackagesCommand, storePackagesInstalled(listPackages), fileCheck(argv));
+        }
+    }
+    else {
+        unsupportedSystem();
     }
 }

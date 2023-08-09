@@ -1,5 +1,6 @@
 #include "system.h"
 #include "backup.h"
+#include "restore.h"
 
 void printWrongUsage(int argc, char **argv) {
     std::cout << "WRONG USAGE: package-flashback";
@@ -9,40 +10,50 @@ void printWrongUsage(int argc, char **argv) {
     }
     std::cout << "\n\n";
     std::cout << "USAGE: package-flashback <arguments>\n";
-    std::cout << "Arguments:\n-c  --> Check the OS.\n-i  --> Show installed packages count.\n-p  --> Show all the installed packages.\n";
+    std::cout << "Arguments:\n-i  --> Show installed packages count.\n-p  --> Show all the installed packages.\n";
     std::cout << "-se --> Search the entered string against all the installed packages.\n";
-    std::cout << "-sv --> Save the installed packages to \"$XDG_DATA_HOME/package-flashback/packagesInstalled.txt\"." << std::endl;
+    std::cout << "-sv --> Save the installed packages to \"$XDG_DATA_HOME/package-flashback/packagesInstalled.txt\".\n";
+    std::cout << "-re --> Restore packages from \'packagesInstalled.txt\' file found at the location passed as argument." << std::endl;
 }
 
 void printHelp() {
     std::cout << "|| Welcome to package-flashback ||\n";
     std::cout << "|| HELP ||\n\n";
     std::cout << "USAGE: package-flashback <arguments>\n";
-    std::cout << "Arguments:\n-c  --> Check the OS.\n-i  --> Show installed packages count.\n-p  --> Print all the installed packages.\n";
+    std::cout << "Arguments:\n-i  --> Show installed packages count.\n-p  --> Print all the installed packages.\n";
     std::cout << "-se --> Search the entered string against all the installed packages.\n";
-    std::cout << "-sv --> Save the installed packages to \"$XDG_DATA_HOME/package-flashback/packagesInstalled.txt\".\n\n";
-    std::cout << "Example: package-flashback -se \"kernel\"" << std::endl;
+    std::cout << "\tExample: package-flashback -se \"kernel\"\n";
+    std::cout << "-sv --> Save the installed packages to \"$XDG_DATA_HOME/package-flashback/packagesInstalled.txt\".\n";
+    std::cout << "-re --> Restore packages from \'packagesInstalled.txt\' file found at the location passed as argument.\n";
+    std::cout << "\tExample: package-flashback -re \"<path/to/packagesInstalled.txt>\"" << std::endl;
 }
 
 int main(int argc, char **argv) {
-
-    if(argc != 2 || (strcmp(argv[1], "-se") == 0 && argc != 3)) {
-        printWrongUsage(argc, argv);
+    
+    if(argc == 1 || strcmp(argv[1], "-h") == 0) {
+        printHelp();
     }
 
-    else if(strcmp(argv[1], "-h") == 0) {
-        printHelp();
+    else if((argc != 3 && (strcmp(argv[1], "-se") == 0 || strcmp(argv[1], "-re") == 0))) {
+        printWrongUsage(argc, argv);
     }
     
     else {
+        std::cout << "|| Welcome to package-flashback ||\n\n";
+        std::string name;
+        bool check = operatingSystemCheck(); 
+        if(check) name = osName();
+
+        // Backup
         if(strcmp(argv[1], "-i") == 0 || strcmp(argv[1], "-p") == 0 || strcmp(argv[1], "-se") == 0 || strcmp(argv[1], "-sv") == 0) {
-            std::cout << "|| Welcome to package-flashback ||\n\n";
-            
-            std::string name;
-            bool check = operatingSystemCheck(); 
-            if(check) name = osName();
-            
-            linuxSystem(check, name, argv);
+        installedPackages(check, name, argv);
+        }
+
+        // Restore
+        else if(strcmp(argv[1], "-re") == 0) {
+            char *arg = "-i";
+            installedPackages(check, name, &arg);
+            toBeInstalledPackages(check, name, argv);
         }
 
         else printWrongUsage(argc, argv);
