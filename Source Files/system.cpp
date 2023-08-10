@@ -5,7 +5,7 @@
 const char *listPackageCount, *listPackages;
 std::string installPackagesCommand;
 
-void unsupportedSystem() {
+void system::unsupportedSystem() {
     std::vector<std::string> supportedOS = {"Arch Linux", "Debian GNU/Linux", "Fedora Linux", "Ubuntu"};
     std::cout << "\nSorry. Only ";
         for(int i = 0; i < supportedOS.size(); i++) {
@@ -16,7 +16,7 @@ void unsupportedSystem() {
     std::cout << " are supported." << std::endl;
 }
 
-bool operatingSystemCheck() {
+bool system::operatingSystemCheck() {
     std::cout << "Checking your operating system... ";
     #if defined(__linux__)
         return true;
@@ -26,7 +26,7 @@ bool operatingSystemCheck() {
     #endif
 }
 
-std::string osName() {
+std::string system::osName() {
     std::string name, line;
     
     // REQUIRES /etc/os-release
@@ -55,7 +55,7 @@ std::string osName() {
     return name;
 }
 
-void setCommandsAndRedirect(bool check, std::string name, char operation, char **argv) {
+void system::setCommandsAndRedirect(bool check, std::string name, char operation, char **argv) {
     if(check) {
         if(name == "Arch Linux") {
             listPackageCount = "pacman -Q | awk '{print $1}' | wc --lines";
@@ -90,7 +90,7 @@ void setCommandsAndRedirect(bool check, std::string name, char operation, char *
     }
 }
 
-void checkDir(std::string fileLocationDir) {
+void system::checkDir(std::string fileLocationDir) {
     struct stat info;
 
     // Using sys/stat.h to see if the directory is already created

@@ -13,8 +13,10 @@
 // Unix Library for fork()
 #include <sys/stat.h> // mkdir()
 
-void backupPackages(const char *listPackageCount, const char *listPackages, char **argv);
-std::vector<std::string> storePackagesInstalled(const char *listPackages);
-void searchPackages(std::vector<std::string> packagesInstalled, char **argv);
-void saveToFile(std::vector<std::string> packagesInstalled);
-const std::string currentDateTime();
+class backup {
+    void backupPackages(const char *listPackageCount, const char *listPackages, char **argv);
+    std::vector<std::string> storePackagesInstalled(const char *listPackages);
+    void searchPackages(std::vector<std::string> packagesInstalled, char **argv);
+    void saveToFile(std::vector<std::string> packagesInstalled);
+    const std::string currentDateTime();
+};

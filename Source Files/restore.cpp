@@ -1,7 +1,7 @@
 #include "restore.h"
 
 // Checking the input file and returning packagesToRestore vector
-std::vector<std::string> fileCheck(char **argv) {
+std::vector<std::string> restore::fileCheck(char **argv) {
     std::vector<std::string> packagesToRestore;
     std::ifstream importFile(argv[2]);
     
@@ -27,7 +27,7 @@ std::vector<std::string> fileCheck(char **argv) {
 }
 
 // Implementation of restore logic
-void restorePackages(std::string installPackagesCommand, std::vector<std::string> packagesInstalled, std::vector<std::string> packagesToRestore, char **argv) {
+void restore::restorePackages(std::string installPackagesCommand, std::vector<std::string> packagesInstalled, std::vector<std::string> packagesToRestore, char **argv) {
     
     // Iterating in packagesInstalled vector and removing already installed packages from packagesToRestore vector
     std::vector<std::string>::iterator installedIt = packagesInstalled.begin();
@@ -46,7 +46,7 @@ void restorePackages(std::string installPackagesCommand, std::vector<std::string
 }
 
 // Packages installation logic
-void installPackages(std::vector<std::string> packagesToRestore, std::string installPackagesCommand) {
+void restore::installPackages(std::vector<std::string> packagesToRestore, std::string installPackagesCommand) {
     std::cout << "You will be installing these " << packagesToRestore.size() << " packages: \n";
         
     //Printing packages

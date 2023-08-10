@@ -4,7 +4,7 @@
 int packagesInstalledCount;
 
 // Implementation of backup logic
-void backupPackages(const char *listPackageCount, const char *listPackages, char **argv) {
+void backup::backupPackages(const char *listPackageCount, const char *listPackages, char **argv) {
     std::vector<std::string> packagesInstalled;
     std::string packagesCount;
     std::array<char, 80> buffer;
@@ -61,7 +61,7 @@ void backupPackages(const char *listPackageCount, const char *listPackages, char
 }
 
 // Storing all installed packages in packagesInstalled vector and return it
-std::vector<std::string> storePackagesInstalled(const char *listPackages) {
+std::vector<std::string> backup::storePackagesInstalled(const char *listPackages) {
     std::string packages;
     std::array<char, 80> buffer;
     std::vector<std::string> packagesInstalled;
@@ -83,7 +83,7 @@ std::vector<std::string> storePackagesInstalled(const char *listPackages) {
 }
 
 // Searching for entered string within the vector elements
-void searchPackages(std::vector<std::string> packagesInstalled, char **argv) {
+void backup::searchPackages(std::vector<std::string> packagesInstalled, char **argv) {
     std::cout << "Found the package(s): " << std::endl;
     int count = 0;
 
@@ -100,7 +100,7 @@ void searchPackages(std::vector<std::string> packagesInstalled, char **argv) {
 }
 
 // Saving packages and name of OS to a file inside $XDG_DATA_HOME
-void saveToFile(std::vector<std::string> packagesInstalled) {
+void backup::saveToFile(std::vector<std::string> packagesInstalled) {
     FILE *packagesInstalledFile;
 
     checkDir(packageFlashbackDir);
@@ -136,7 +136,7 @@ void saveToFile(std::vector<std::string> packagesInstalled) {
 }
 
 // Getting current date and time from system
-const std::string currentDateTime() {
+const std::string backup::currentDateTime() {
     time_t now = time(0);
     struct tm *tstruct = localtime(&now);
     char buf[80];
