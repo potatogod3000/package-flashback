@@ -1,9 +1,11 @@
 #include "restore.h"
 
+// Checking the input file and returning packagesToRestore vector
 std::vector<std::string> fileCheck(char **argv) {
     std::vector<std::string> packagesToRestore;
     std::ifstream importFile(argv[2]);
     
+    // Checking whether the input file location is valid and checking if its empty
     if(!importFile) {
         std::cerr << "The restore file doesn't exist!" << std::endl;
     }
@@ -13,31 +15,50 @@ std::vector<std::string> fileCheck(char **argv) {
         importFile.close();
     }
 
+    // Adding each line as an element to packagesToRestore vector
     else {
         std::string line;
         for(int i=0; getline(importFile, line); i++) {
             packagesToRestore.push_back(line);
         }
-
-        std::cout << "You will be installing the following packages: \n";
-        
-        //Printing packages in a formatted manner (using <iomanip>)
-        const char separator    = ' ';
-        const int spaceWidth     = 55;
-
-        for(int i = 0; i < packagesToRestore.size(); i += 3) {
-            std::cout << std::left << std::setw(spaceWidth) << std::setfill(separator) << packagesToRestore[i];
-            std::cout << std::left << std::setw(spaceWidth) << std::setfill(separator) << packagesToRestore[i+1];
-            std::cout << std::left << std::setw(spaceWidth) << std::setfill(separator) << packagesToRestore[i+2] << std::endl;
-        }
     }
+
     return packagesToRestore;
 }
 
-void restorePackages(const char* installPackagesCommand, std::vector<std::string> packagesInstalled, std::vector<std::string> packagesToRestore) {
-    for(int i, j; i < packagesInstalled.size(), j < packagesToRestore.size(); i++, j++) {
-        if(packagesInstalled[i] == packagesInstalled[j]) {
-            
+// Implementation of restore logic
+void restorePackages(const char* installPackagesCommand, std::vector<std::string> packagesInstalled, std::vector<std::string> packagesToRestore, char **argv) {
+    
+    // Iterating in packagesInstalled vector and removing already installed packages from packagesToRestore vector
+    std::vector<std::string>::iterator installedIt = packagesInstalled.begin();
+    for(installedIt; installedIt != packagesInstalled.end(); installedIt++) {
+        packagesToRestore.erase(std::remove(packagesToRestore.begin(), packagesToRestore.end(), *installedIt), packagesToRestore.end());
+    }
+
+    // Restore process
+    if(packagesToRestore.empty()) {
+        std::cerr << "No packages to install!" << std::endl;
+    }
+
+    else {
+        std::cout << "You will be installing these " << packagesToRestore.size() << " packages: \n";
+        
+        //Printing packages
+        for(auto it: packagesToRestore) {
+            std::cout << it << std::endl;
+        }
+
+        char decision;
+        std::cout << "\nDo you wish to install the packages now? [Type 'Y' for yes or 'N' for no]: ";
+        while(std::cin >> decision) {
+            if(decision == 'Y' || decision == 'y' || decision == 'N' || decision == 'n') {
+                break;
+            }
+
+            else {
+                std::cin.ignore();
+                std::cout << "Please enter either 'Y' for yes or 'N' for no: ";
+            }
         }
     }
 }

@@ -6,6 +6,4 @@
 void unsupportedSystem();
 bool operatingSystemCheck();
 std::string osName();
-void setCommands(bool check, std::string name, char **argv);
-void installedPackages();
-void toBeInstalledPackages();
+void setCommandsAndRedirect(bool check, std::string name, char operation, char **argv);

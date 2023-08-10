@@ -18,7 +18,7 @@
 #include <cerrno>
 */
 
-void packages(const char *listPackageCount, const char *listPackages, char **argv);
+void backupPackages(const char *listPackageCount, const char *listPackages, char **argv);
 std::vector<std::string> storePackagesInstalled(const char *listPackages);
 void searchPackages(std::vector<std::string> packagesInstalled, char **argv);
 void savePackages(std::vector<std::string> packagesInstalled);

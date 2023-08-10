@@ -5,7 +5,8 @@ const std::string xdgDataDir = getenv("HOME") + std::string("/.local/share");
 const std::string packageFlashbackDir = xdgDataDir + std::string("/package-flashback");
 const std::string packageFlashbackFile = packageFlashbackDir + std::string("/packagesInstalled.txt");
 
-void packages(const char *listPackageCount, const char *listPackages, char **argv) {
+// Implementation of backup logic
+void backupPackages(const char *listPackageCount, const char *listPackages, char **argv) {
     std::vector<std::string> packagesInstalled;
     std::string packagesCount;
     std::array<char, 80> buffer;
@@ -38,7 +39,7 @@ void packages(const char *listPackageCount, const char *listPackages, char **arg
         
         //Printing packages in a formatted manner (using <iomanip>)
         const char separator    = ' ';
-        const int spaceWidth     = 75;
+        const int spaceWidth     = 55;
 
         std::cout << " The packages installed are:\n\n";
         for(int i = 0; i < packagesInstalled.size(); i += 3) {
@@ -61,7 +62,7 @@ void packages(const char *listPackageCount, const char *listPackages, char **arg
     }
 }
 
-// Storing all installed packages in `std::vector packagesInstalled<std::string>`
+// Storing all installed packages in packagesInstalled vector and return it
 std::vector<std::string> storePackagesInstalled(const char *listPackages) {
     std::string packages;
     std::array<char, 80> buffer;
@@ -76,11 +77,11 @@ std::vector<std::string> storePackagesInstalled(const char *listPackages) {
             packagesInstalled.push_back(packages);
         }
         pclose(pkgs);
-        return packagesInstalled;
     }
     catch(const std::exception &exception) {
         std::cerr << "\n" << "!!!EXCEPTION!!! \"" << exception.what() << "\"" << '\n';
     }
+    return packagesInstalled;
 }
 
 // Searching for entered string within the vector elements

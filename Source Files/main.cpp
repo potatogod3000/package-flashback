@@ -46,14 +46,12 @@ int main(int argc, char **argv) {
 
         // Backup
         if(strcmp(argv[1], "-i") == 0 || strcmp(argv[1], "-p") == 0 || strcmp(argv[1], "-se") == 0 || strcmp(argv[1], "-sv") == 0) {
-        installedPackages(check, name, argv);
+            setCommandsAndRedirect(check, name, 'b', argv);
         }
 
         // Restore
         else if(strcmp(argv[1], "-re") == 0) {
-            char *arg = "-i";
-            installedPackages(check, name, &arg);
-            toBeInstalledPackages(check, name, argv);
+            setCommandsAndRedirect(check, name, 'r', argv);
         }
 
         else printWrongUsage(argc, argv);
