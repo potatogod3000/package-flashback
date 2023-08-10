@@ -27,7 +27,7 @@ std::vector<std::string> fileCheck(char **argv) {
 }
 
 // Implementation of restore logic
-void restorePackages(const char* installPackagesCommand, std::vector<std::string> packagesInstalled, std::vector<std::string> packagesToRestore, char **argv) {
+void restorePackages(std::string installPackagesCommand, std::vector<std::string> packagesInstalled, std::vector<std::string> packagesToRestore, char **argv) {
     
     // Iterating in packagesInstalled vector and removing already installed packages from packagesToRestore vector
     std::vector<std::string>::iterator installedIt = packagesInstalled.begin();
@@ -41,24 +41,48 @@ void restorePackages(const char* installPackagesCommand, std::vector<std::string
     }
 
     else {
-        std::cout << "You will be installing these " << packagesToRestore.size() << " packages: \n";
+        installPackages(packagesToRestore, installPackagesCommand);
+    }
+}
+
+// Packages installation logic
+void installPackages(std::vector<std::string> packagesToRestore, std::string installPackagesCommand) {
+    std::cout << "You will be installing these " << packagesToRestore.size() << " packages: \n";
         
-        //Printing packages
-        for(auto it: packagesToRestore) {
-            std::cout << it << std::endl;
+    //Printing packages
+    for(auto it: packagesToRestore) {
+        std::cout << it << std::endl;
+        installPackagesCommand += " " + it;
+    }
+
+    char decision;
+    std::cout << "\nDo you wish to install the packages now? [Type 'Y' for yes or 'N' for no]: ";
+    while(std::cin >> decision) {
+        if(decision == 'Y' || decision == 'y' || decision == 'N' || decision == 'n') {
+            break;
         }
 
-        char decision;
-        std::cout << "\nDo you wish to install the packages now? [Type 'Y' for yes or 'N' for no]: ";
-        while(std::cin >> decision) {
-            if(decision == 'Y' || decision == 'y' || decision == 'N' || decision == 'n') {
-                break;
-            }
+        else {
+            std::cin.ignore();
+            std::cout << "Please enter either 'Y' for yes or 'N' for no: ";
+        }
+    }
 
-            else {
-                std::cin.ignore();
-                std::cout << "Please enter either 'Y' for yes or 'N' for no: ";
+    if(decision == 'Y' || decision == 'y') {
+        std::cout << installPackagesCommand << "\n";
+        std::array<char, 128> buffer;
+        std::string result;
+        FILE *installation = popen(installPackagesCommand.c_str(), "r");
+        try {
+            while (fgets(buffer.data(), buffer.size(), installation) != nullptr) {
+                result = buffer.data();
+                std::cout << result;
             }
+            result.erase();
+            pclose(installation);
+        }
+        catch(const std::exception &exception) {
+            std::cerr << "\n" << "!!!EXCEPTION!!! \"" << exception.what() << "\"" << '\n';
         }
     }
 }

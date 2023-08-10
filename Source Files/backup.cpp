@@ -1,9 +1,7 @@
 #include "backup.h"
+#include "system.h"
 
 int packagesInstalledCount;
-const std::string xdgDataDir = getenv("HOME") + std::string("/.local/share");
-const std::string packageFlashbackDir = xdgDataDir + std::string("/package-flashback");
-const std::string packageFlashbackFile = packageFlashbackDir + std::string("/packagesInstalled.txt");
 
 // Implementation of backup logic
 void backupPackages(const char *listPackageCount, const char *listPackages, char **argv) {
@@ -53,7 +51,7 @@ void backupPackages(const char *listPackageCount, const char *listPackages, char
 
     // Save packages to a file in $XDG_DATA_HOME/package-flashback
     if(strcmp(argv[1], "-sv") == 0) {
-        savePackages(packagesInstalled);
+        saveToFile(packagesInstalled);
     }
 
     // Searching within installed packages (argv -se <"string">)
@@ -101,18 +99,14 @@ void searchPackages(std::vector<std::string> packagesInstalled, char **argv) {
     std::cout << "\nFound " << count << " packages!" << std::endl;
 }
 
-// Saving packages to a file inside $XDG_DATA_HOME
-void savePackages(std::vector<std::string> packagesInstalled) {
-    struct stat info;
+// Saving packages and name of OS to a file inside $XDG_DATA_HOME
+void saveToFile(std::vector<std::string> packagesInstalled) {
     FILE *packagesInstalledFile;
 
-    // Using sys/stat.h to see if the directory is already created
-    if(stat(packageFlashbackDir.c_str(), &info) != 0) {
-        mkdir(packageFlashbackDir.c_str(), 0777);    
-    }
+    checkDir(packageFlashbackDir);
     
     // Check if packagesInstalled.txt has already been created and make it a backup
-    else if(packagesInstalledFile = fopen(packageFlashbackFile.c_str(), "r")) {
+    if(packagesInstalledFile = fopen(packageFlashbackFile.c_str(), "r")) {
         std::ifstream packagesInstalledTxt(packageFlashbackFile);
         std::string line;
         bool match;
@@ -133,11 +127,11 @@ void savePackages(std::vector<std::string> packagesInstalled) {
     }
 
     // Writing packagesInstalled vector into "packagesInstalled.txt" file
-    std::ofstream packagesTxt(packageFlashbackFile);
+    std::ofstream packagesTxtFile(packageFlashbackFile);
     for(auto it: packagesInstalled) {
-        packagesTxt << it << std::endl;
+        packagesTxtFile << it << std::endl;
     }
-    packagesTxt.close();
+    packagesTxtFile.close();
     std::cout << "Saved in \'" << packageFlashbackDir << "/\'." << std::endl;
 }
 
