@@ -32,7 +32,7 @@ void restorePackages(const char* installPackagesCommand, std::vector<std::string
     // Iterating in packagesInstalled vector and removing already installed packages from packagesToRestore vector
     std::vector<std::string>::iterator installedIt = packagesInstalled.begin();
     for(installedIt; installedIt != packagesInstalled.end(); installedIt++) {
-        packagesToRestore.erase(std::remove(packagesToRestore.begin(), packagesToRestore.end(), *installedIt), packagesToRestore.end());
+        packagesToRestore.erase(std::find(packagesToRestore.begin(), packagesToRestore.end(), *installedIt));
     }
 
     // Restore process
