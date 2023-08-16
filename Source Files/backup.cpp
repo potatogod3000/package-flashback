@@ -1,10 +1,9 @@
-#include "backup.h"
 #include "system.h"
 
 int packagesInstalledCount;
 
 // Implementation of backup logic
-void backup::backupPackages(const char *listPackageCount, const char *listPackages, char **argv) {
+void Actions::backupPackages(const char *listPackageCount, const char *listPackages, char **argv) {
     std::vector<std::string> packagesInstalled;
     std::string packagesCount;
     std::array<char, 80> buffer;
@@ -61,7 +60,7 @@ void backup::backupPackages(const char *listPackageCount, const char *listPackag
 }
 
 // Storing all installed packages in packagesInstalled vector and return it
-std::vector<std::string> backup::storePackagesInstalled(const char *listPackages) {
+std::vector<std::string> Actions::storePackagesInstalled(const char *listPackages) {
     std::string packages;
     std::array<char, 80> buffer;
     std::vector<std::string> packagesInstalled;
@@ -83,7 +82,7 @@ std::vector<std::string> backup::storePackagesInstalled(const char *listPackages
 }
 
 // Searching for entered string within the vector elements
-void backup::searchPackages(std::vector<std::string> packagesInstalled, char **argv) {
+void Actions::searchPackages(std::vector<std::string> packagesInstalled, char **argv) {
     std::cout << "Found the package(s): " << std::endl;
     int count = 0;
 
@@ -100,10 +99,10 @@ void backup::searchPackages(std::vector<std::string> packagesInstalled, char **a
 }
 
 // Saving packages and name of OS to a file inside $XDG_DATA_HOME
-void backup::saveToFile(std::vector<std::string> packagesInstalled) {
+void Actions::saveToFile(std::vector<std::string> packagesInstalled) {
     FILE *packagesInstalledFile;
 
-    checkDir(packageFlashbackDir);
+    actions.checkDir(actions.packageFlashbackDir);
     
     // Check if packagesInstalled.txt has already been created and make it a backup
     if(packagesInstalledFile = fopen(packageFlashbackFile.c_str(), "r")) {
@@ -136,7 +135,7 @@ void backup::saveToFile(std::vector<std::string> packagesInstalled) {
 }
 
 // Getting current date and time from system
-const std::string backup::currentDateTime() {
+const std::string Actions::currentDateTime() {
     time_t now = time(0);
     struct tm *tstruct = localtime(&now);
     char buf[80];

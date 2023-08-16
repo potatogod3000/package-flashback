@@ -1,6 +1,4 @@
 #include "system.h"
-#include "backup.h"
-#include "restore.h"
 
 void printWrongUsage(int argc, char **argv) {
     std::cout << "WRONG USAGE: package-flashback";
@@ -39,19 +37,21 @@ int main(int argc, char **argv) {
     }
     
     else {
+        System system;
+
         std::cout << "|| Welcome to package-flashback ||\n\n";
         std::string name;
-        bool check = operatingSystemCheck(); 
-        if(check) name = osName();
+        bool check = system.operatingSystemCheck(); 
+        if(check) name = system.osName();
 
         // Backup
         if(strcmp(argv[1], "-i") == 0 || strcmp(argv[1], "-p") == 0 || strcmp(argv[1], "-se") == 0 || strcmp(argv[1], "-sv") == 0) {
-            setCommandsAndRedirect(check, name, 'b', argv);
+            system.setCommandsAndRedirect(check, name, 'b', argv);
         }
 
         // Restore
         else if(strcmp(argv[1], "-re") == 0) {
-            setCommandsAndRedirect(check, name, 'r', argv);
+            system.setCommandsAndRedirect(check, name, 'r', argv);
         }
 
         else printWrongUsage(argc, argv);

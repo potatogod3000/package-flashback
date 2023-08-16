@@ -1,11 +1,10 @@
 #include "system.h"
-#include "backup.h"
-#include "restore.h"
+#include "actions.h"
 
 const char *listPackageCount, *listPackages;
 std::string installPackagesCommand;
 
-void system::unsupportedSystem() {
+void System::unsupportedSystem() {
     std::vector<std::string> supportedOS = {"Arch Linux", "Debian GNU/Linux", "Fedora Linux", "Ubuntu"};
     std::cout << "\nSorry. Only ";
         for(int i = 0; i < supportedOS.size(); i++) {
@@ -16,7 +15,7 @@ void system::unsupportedSystem() {
     std::cout << " are supported." << std::endl;
 }
 
-bool system::operatingSystemCheck() {
+bool System::operatingSystemCheck() {
     std::cout << "Checking your operating system... ";
     #if defined(__linux__)
         return true;
@@ -26,7 +25,7 @@ bool system::operatingSystemCheck() {
     #endif
 }
 
-std::string system::osName() {
+std::string System::osName() {
     std::string name, line;
     
     // REQUIRES /etc/os-release
@@ -55,7 +54,7 @@ std::string system::osName() {
     return name;
 }
 
-void system::setCommandsAndRedirect(bool check, std::string name, char operation, char **argv) {
+void System::setCommandsAndRedirect(bool check, std::string name, char operation, char **argv) {
     if(check) {
         if(name == "Arch Linux") {
             listPackageCount = "pacman -Q | awk '{print $1}' | wc --lines";
@@ -82,15 +81,15 @@ void system::setCommandsAndRedirect(bool check, std::string name, char operation
 
 
     if(operation == 'b') {
-        backupPackages(listPackageCount, listPackages, argv);
+        backup.backupPackages(listPackageCount, listPackages, argv);
     }
 
     else if(operation == 'r') {
-        restorePackages(installPackagesCommand, storePackagesInstalled(listPackages), fileCheck(argv), argv);
+        restore.restorePackages(installPackagesCommand, storePackagesInstalled(listPackages), restore.fileCheck(argv), argv);
     }
 }
 
-void system::checkDir(std::string fileLocationDir) {
+void System::checkDir(std::string fileLocationDir) {
     struct stat info;
 
     // Using sys/stat.h to see if the directory is already created
