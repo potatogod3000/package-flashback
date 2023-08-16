@@ -1,15 +1,18 @@
 # package-flashback (CLI Tool)
 ## About
-This is a CLI tool for Linux-based operating systems to backup currently installed packages as a list and then restore the same selection of packages in a fresh install of the OS.\
+This is a CLI tool for Linux-based operating systems to backup currently installed packages as a list and then restore the same selection of packages in a fresh install of the OS.
+
 NOTE: This tool currently only supports Arch Linux, Debian GNU/Linux, Fedora Linux and Ubuntu (its derivatives).
 
 ## Usage
-```package-flashback <arguments>```
-* Arguments:
-  * -i  --> Show installed packages count.
-  * -p  --> Print all the installed packages.
-  * -se --> Search the entered string against all the installed packages.\
-    Example: ```package-flashback -se "kernel"```
-  * -sv --> Save the installed packages to '$XDG_DATA_HOME/package-flashback/packagesInstalled.txt'. (XDG_DATA_HOME, by default, is located at '$HOME/.local/share')
-  * -re --> Restore packages from 'packagesInstalled.txt' file found at the location, passed as argument.\
-    Example: ```package-flashback -re "<path/to/packagesInstalled.txt>"```
+```package-flashback <argument>```
+
+A list of all the arguments are given in the table.
+| Argument  | Description                                                                                                                                                                      |
+|:---------:|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -i        | Shows installed packages count.                                                                                                                                                  |
+| -p        | Prints all the installed packages.                                                                                                                                               |
+| -se       | Searches the entered string (passed as an argument) against all the currently installed packages.<br/> Example: ```package-flashback -se "kernel"```                             |
+| -sv       | Saves the installed packages to '$XDG_DATA_HOME/package-flashback/packagesInstalled.txt'.<br/> NOTE: XDG_DATA_HOME is located at '$HOME/.local/share'.                           |
+| -re       | Restores packages from 'packagesInstalled.txt' file found at the location (passed as an argument).<br/> Example: ```package-flashback -re "~/Documents/packagesInstalled.txt"``` |
+| -h        | Displays help and exits.                                                                                                                                                         |
